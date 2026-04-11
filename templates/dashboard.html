@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Cases</h2>
+<div class="row">
+  <div class="col-md-6">
+    <form method="post" action="/cases/create">
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input class="form-control" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Platform</label>
+        <input class="form-control" name="platform">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Keywords (comma separated)</label>
+        <input class="form-control" name="keywords">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Time Range</label>
+        <input class="form-control" name="time_range" placeholder="e.g. last 7 days">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Feed URL (RSS/Atom)</label>
+        <input class="form-control" name="feed_url" placeholder="https://example.com/feed.xml">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Posts (max)</label>
+        <input class="form-control" name="posts_count" type="number" min="0" placeholder="100">
+      </div>
+      <button class="btn btn-success">Create Case</button>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <h4>Your Cases</h4>
+    <ul class="list-group">
+      {% for c in cases %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ c.name }}</strong><br>
+          <small>{{ c.platform }} • {{ c.keywords|join(', ') }}</small>
+        </div>
+        <div class="text-end">
+          <small class="text-muted">ID: {{ c._id }}</small>
+          <div class="mt-1">
+            {% if active_case_id == c._id|string %}
+              <span class="badge bg-primary">Active</span>
+            {% else %}
+              <a class="btn btn-sm btn-outline-primary" href="/cases/select/{{ c._id }}">Set Active</a>
+            {% endif %}
+            <form method="post" action="/cases/fetch/{{ c._id }}" class="d-inline-block ms-1">
+              <button class="btn btn-sm btn-primary">Fetch & Predict</button>
+            </form>
+          </div>
+        </div>
+      </li>
+      {% else %}
+      <li class="list-group-item">No cases yet</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

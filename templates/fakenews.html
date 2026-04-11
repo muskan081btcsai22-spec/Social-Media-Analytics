@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Fake News Classification</h3>
+<div id="chart"></div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>Plotly.newPlot('chart', JSON.parse('{{ chart_json|safe }}'));</script>
+
+<h4 class="mt-4">Sample Posts (showing 5)</h4>
+<table class="table table-striped">
+  <thead><tr><th>Text</th><th>Label</th></tr></thead>
+  <tbody>
+    {% for row in classified %}
+    <tr>
+      <td>{{ row.text|truncate(200) }}</td>
+      <td>
+        {% if row.label == 'Fake' %}
+          <span class="badge bg-danger">Fake</span>
+        {% elif row.label == 'Real' %}
+          <span class="badge bg-success">Real</span>
+        {% else %}
+          <span class="badge bg-secondary">{{ row.label }}</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
