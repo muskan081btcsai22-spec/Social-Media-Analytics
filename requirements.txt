@@ -7,3 +7,6 @@ scikit-learn
 pandas
 requests
 feedparser
+vaderSentiment
+networkx
+pyvis

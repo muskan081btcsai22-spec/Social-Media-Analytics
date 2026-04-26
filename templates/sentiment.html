@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Sentiment Analysis</h3>
+<p class="text-muted">Posts classified as Positive / Negative / Neutral using VADER</p>
+
+<div id="chart"></div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>Plotly.newPlot('chart', JSON.parse('{{ chart_json|safe }}'));</script>
+
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div class="card text-center border-success mb-3">
+      <div class="card-body">
+        <h5 class="card-title text-success">Positive</h5>
+        <h2>{{ results.counts.positive }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center border-danger mb-3">
+      <div class="card-body">
+        <h5 class="card-title text-danger">Negative</h5>
+        <h2>{{ results.counts.negative }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center border-secondary mb-3">
+      <div class="card-body">
+        <h5 class="card-title text-secondary">Neutral</h5>
+        <h2>{{ results.counts.neutral }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4 class="mt-4">Most Negative Posts</h4>
+<table class="table table-striped">
+  <thead>
+    <tr><th>Post</th><th>Score</th></tr>
+  </thead>
+  <tbody>
+    {% for post in negative[:10] %}
+    <tr>
+      <td>{{ post.text }}</td>
+      <td><span class="badge bg-danger">{{ post.score }}</span></td>
+    </tr>
+    {% endfor %}
+    {% if not negative %}
+    <tr><td colspan="2" class="text-muted">No negative posts found.</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+{% endblock %}

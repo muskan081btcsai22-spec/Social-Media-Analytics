@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>User Segmentation</h3>
+<p class="text-muted">Users grouped by engagement using KMeans clustering</p>
+
+<div id="chart"></div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>Plotly.newPlot('chart', JSON.parse('{{ chart_json|safe }}'));</script>
+
+<h4 class="mt-4">Users by Segment</h4>
+<table class="table table-striped">
+  <thead>
+    <tr><th>#</th><th>Username</th><th>Segment</th></tr>
+  </thead>
+  <tbody>
+    {% for user in results.users %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ user.username }}</td>
+      <td>
+        {% if user.label == 'Power Users' %}
+          <span class="badge bg-primary">{{ user.label }}</span>
+        {% elif user.label == 'Casual Users' %}
+          <span class="badge bg-success">{{ user.label }}</span>
+        {% elif user.label == 'Lurkers' %}
+          <span class="badge bg-secondary">{{ user.label }}</span>
+        {% else %}
+          <span class="badge bg-danger">{{ user.label }}</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

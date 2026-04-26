@@ -22,10 +22,16 @@ def create_app():
     from routes.cases import cases_bp
     from routes.trending import trending_bp
     from routes.fakenews import fakenews_bp
+    from routes.sentiment import sentiment_bp
+    from routes.network import network_bp
+    from routes.segmentation import segmentation_bp
     app.register_blueprint(auth_bp, url_prefix='')
     app.register_blueprint(cases_bp, url_prefix='')
     app.register_blueprint(trending_bp, url_prefix='')
     app.register_blueprint(fakenews_bp, url_prefix='')
+    app.register_blueprint(sentiment_bp, url_prefix='')
+    app.register_blueprint(network_bp, url_prefix='')
+    app.register_blueprint(segmentation_bp, url_prefix='')
 
     @login_manager.user_loader
     def load_user(user_id):
