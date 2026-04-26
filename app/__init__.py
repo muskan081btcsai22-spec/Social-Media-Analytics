@@ -1,18 +1,14 @@
 import os
 from flask import Flask
 from flask_login import LoginManager
-from pymongo import MongoClient
+from config import db
 
 login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'))
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret')
-    mongo_uri = os.environ.get('MONGO_URI', 'mongodb://localhost:27017')
-    db_name = os.environ.get('MONGO_DBNAME', 'sma_db')
-    client = MongoClient(mongo_uri)
-    app.db = client[db_name]
-    # feedparser does not require a token by default; keep other config via env vars
+    app.db = db
 
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
@@ -31,6 +27,7 @@ def create_app():
     from routes.recommendation import recommendation_bp
     from routes.influencer import influencer_bp
     from routes.visualization import visualization_bp
+    from routes.prediction import prediction_bp
     app.register_blueprint(auth_bp, url_prefix='')
     app.register_blueprint(cases_bp, url_prefix='')
     app.register_blueprint(trending_bp, url_prefix='')
@@ -44,7 +41,7 @@ def create_app():
     app.register_blueprint(recommendation_bp, url_prefix='')
     app.register_blueprint(influencer_bp, url_prefix='')
     app.register_blueprint(visualization_bp, url_prefix='')
-
+    app.register_blueprint(prediction_bp, url_prefix='')
 
     @login_manager.user_loader
     def load_user(user_id):

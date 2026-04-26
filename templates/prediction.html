@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>🔮 Popularity Prediction</h2>
+
+  <!-- Accuracy Card -->
+  <div class="card mb-4" style="max-width:300px;">
+    <div class="card-body text-center">
+      <h6 class="card-subtitle text-muted">Model Accuracy (R² Score)</h6>
+      <h2 class="text-success">{{ accuracy }}</h2>
+    </div>
+  </div>
+
+  <!-- Input Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Post Text</label>
+          <textarea name="text" class="form-control" rows="3" placeholder="Enter your post here..."></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Hour of Day (0-23)</label>
+          <input type="number" name="hour" class="form-control" min="0" max="23" value="12">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Your Follower Count</label>
+          <input type="number" name="follower_count" class="form-control" value="1000">
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" name="has_media" class="form-check-input" id="mediaCheck">
+          <label class="form-check-label" for="mediaCheck">Has Image/Video?</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Predict Likes 🚀</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Result Card -->
+  {% if result is not none %}
+  <div class="card border-success">
+    <div class="card-body text-center">
+      <h6 class="text-muted">Predicted Likes</h6>
+      <h1 class="text-success">❤️ {{ result }}</h1>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
