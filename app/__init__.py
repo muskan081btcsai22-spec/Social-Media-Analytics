@@ -22,10 +22,16 @@ def create_app():
     from routes.cases import cases_bp
     from routes.trending import trending_bp
     from routes.fakenews import fakenews_bp
+    from routes.ad_campaign import ad_bp
+    from routes.realtime import realtime_bp
+    from routes.competitor import competitor_bp
     app.register_blueprint(auth_bp, url_prefix='')
     app.register_blueprint(cases_bp, url_prefix='')
     app.register_blueprint(trending_bp, url_prefix='')
     app.register_blueprint(fakenews_bp, url_prefix='')
+    app.register_blueprint(ad_bp, url_prefix='')
+    app.register_blueprint(realtime_bp, url_prefix='')
+    app.register_blueprint(competitor_bp, url_prefix='')
 
     @login_manager.user_loader
     def load_user(user_id):

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Real-Time Monitoring</h2>
+
+    <form method="post" action="{{ url_for('realtime.realtime_page') }}" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-8">
+                <label for="keyword" class="form-label">Keyword</label>
+                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Enter keyword to monitor" required>
+            </div>
+            <div class="col-md-2">
+                <label for="max_posts" class="form-label">Max Posts</label>
+                <input type="number" class="form-control" id="max_posts" name="max_posts" value="50" min="1" max="100">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Fetch Live Data</button>
+            </div>
+        </div>
+    </form>
+
+    {% if posts and posts|length > 0 %}
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-file-post fs-1 text-primary"></i>
+                        <h5 class="card-title">Total Posts</h5>
+                        <p class="card-text fs-4">{{ stats.total_posts }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-heart fs-1 text-danger"></i>
+                        <h5 class="card-title">Total Likes</h5>
+                        <p class="card-text fs-4">{{ stats.total_likes }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-arrow-repeat fs-1 text-success"></i>
+                        <h5 class="card-title">Total Retweets</h5>
+                        <p class="card-text fs-4">{{ stats.total_retweets }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-clock fs-1 text-warning"></i>
+                        <h5 class="card-title">Most Recent</h5>
+                        <p class="card-text fs-6">{{ stats.most_recent or 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if chart_json %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Post Volume Over Time</h5>
+                <div id="volume-chart"></div>
+            </div>
+        </div>
+        <script>
+            var fig = JSON.parse('{{ chart_json|safe }}');
+            Plotly.newPlot('volume-chart', fig.data, fig.layout);
+        </script>
+        {% endif %}
+
+        <h4 class="mb-3">Live Post Feed</h4>
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">@{{ post.username }}</h6>
+                        <p class="card-text">{{ post.text }}</p>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">
+                                <i class="bi bi-heart"></i> {{ post.likes }}
+                                <i class="bi bi-arrow-repeat ms-2"></i> {{ post.retweets }}
+                            </small>
+                            <small class="text-muted">{{ post.created_at }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="alert alert-info">
+            <h5>No data yet — enter a keyword above and click Fetch</h5>
+            <p>Search for live posts using a keyword and maximum number of posts to monitor real-time activity.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

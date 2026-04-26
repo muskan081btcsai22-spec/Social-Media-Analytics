@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Competitor Analysis</h2>
+
+    <form method="post" action="{{ url_for('competitor.competitor_page') }}" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-5">
+                <label for="keyword_a" class="form-label">Brand A Keyword</label>
+                <input type="text" class="form-control" id="keyword_a" name="keyword_a" placeholder="e.g., Tesla" required>
+            </div>
+            <div class="col-md-5">
+                <label for="keyword_b" class="form-label">Brand B Keyword</label>
+                <input type="text" class="form-control" id="keyword_b" name="keyword_b" placeholder="e.g., Ford" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Compare</button>
+            </div>
+        </div>
+    </form>
+
+    {% if results %}
+        {% set brands = results.keys()|list %}
+        {% set brand_a = brands[0] %}
+        {% set brand_b = brands[1] %}
+        {% set stats_a = results[brand_a] %}
+        {% set stats_b = results[brand_b] %}
+
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Metric</th>
+                        <th>{{ brand_a }}</th>
+                        <th>{{ brand_b }}</th>
+                        <th>Winner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Post Count</td>
+                        <td>{{ stats_a.post_count }}</td>
+                        <td>{{ stats_b.post_count }}</td>
+                        <td>
+                            {% if stats_a.post_count > stats_b.post_count %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_a }}</span>
+                            {% elif stats_b.post_count > stats_a.post_count %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_b }}</span>
+                            {% else %}Tie{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Total Likes</td>
+                        <td>{{ stats_a.total_likes }}</td>
+                        <td>{{ stats_b.total_likes }}</td>
+                        <td>
+                            {% if stats_a.total_likes > stats_b.total_likes %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_a }}</span>
+                            {% elif stats_b.total_likes > stats_a.total_likes %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_b }}</span>
+                            {% else %}Tie{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Total Retweets</td>
+                        <td>{{ stats_a.total_retweets }}</td>
+                        <td>{{ stats_b.total_retweets }}</td>
+                        <td>
+                            {% if stats_a.total_retweets > stats_b.total_retweets %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_a }}</span>
+                            {% elif stats_b.total_retweets > stats_a.total_retweets %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_b }}</span>
+                            {% else %}Tie{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Avg Engagement</td>
+                        <td>{{ stats_a.avg_engagement }}</td>
+                        <td>{{ stats_b.avg_engagement }}</td>
+                        <td>
+                            {% if stats_a.avg_engagement > stats_b.avg_engagement %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_a }}</span>
+                            {% elif stats_b.avg_engagement > stats_a.avg_engagement %}
+                                <span class="text-success"><i class="bi bi-check-circle"></i> {{ brand_b }}</span>
+                            {% else %}Tie{% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        {% if chart_json %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Metrics Comparison</h5>
+                <div id="comparison-chart"></div>
+            </div>
+        </div>
+        <script>
+            var compFig = JSON.parse('{{ chart_json|safe }}');
+            Plotly.newPlot('comparison-chart', compFig.data, compFig.layout);
+        </script>
+        {% endif %}
+
+        <div class="row mb-4">
+            {% for brand in brands %}
+            {% if brand in pie_charts %}
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ brand }} Engagement Breakdown</h5>
+                        <div id="pie-{{ loop.index }}"></div>
+                    </div>
+                </div>
+                <script>
+                    var pieFig{{ loop.index }} = JSON.parse('{{ pie_charts[brand]|safe }}');
+                    Plotly.newPlot('pie-{{ loop.index }}', pieFig{{ loop.index }}.data, pieFig{{ loop.index }}.layout);
+                </script>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Winner Summary</h5>
+            </div>
+            <div class="card-body">
+                {% set a_wins = namespace(count=0) %}
+                {% set b_wins = namespace(count=0) %}
+                {% if stats_a.post_count > stats_b.post_count %}{% set a_wins.count = a_wins.count + 1 %}{% elif stats_b.post_count > stats_a.post_count %}{% set b_wins.count = b_wins.count + 1 %}{% endif %}
+                {% if stats_a.total_likes > stats_b.total_likes %}{% set a_wins.count = a_wins.count + 1 %}{% elif stats_b.total_likes > stats_a.total_likes %}{% set b_wins.count = b_wins.count + 1 %}{% endif %}
+                {% if stats_a.total_retweets > stats_b.total_retweets %}{% set a_wins.count = a_wins.count + 1 %}{% elif stats_b.total_retweets > stats_a.total_retweets %}{% set b_wins.count = b_wins.count + 1 %}{% endif %}
+                {% if stats_a.avg_engagement > stats_b.avg_engagement %}{% set a_wins.count = a_wins.count + 1 %}{% elif stats_b.avg_engagement > stats_a.avg_engagement %}{% set b_wins.count = b_wins.count + 1 %}{% endif %}
+
+                {% if a_wins.count > b_wins.count %}
+                    <h4 class="text-success"><i class="bi bi-trophy"></i> Overall Winner: {{ brand_a }}</h4>
+                    <p>{{ brand_a }} won {{ a_wins.count }} out of 4 metrics.</p>
+                {% elif b_wins.count > a_wins.count %}
+                    <h4 class="text-success"><i class="bi bi-trophy"></i> Overall Winner: {{ brand_b }}</h4>
+                    <p>{{ brand_b }} won {{ b_wins.count }} out of 4 metrics.</p>
+                {% else %}
+                    <h4 class="text-warning"><i class="bi bi-dash-circle"></i> It's a Tie!</h4>
+                    <p>Both brands performed equally across all metrics.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    {% else %}
+        <div class="alert alert-info">
+            <h5>Enter two brand keywords above to start the comparison</h5>
+            <p>Compare social media performance between two brands by analyzing their posts, engagement, and hashtags.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

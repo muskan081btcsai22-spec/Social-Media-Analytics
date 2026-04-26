@@ -7,3 +7,4 @@ scikit-learn
 pandas
 requests
 feedparser
+apify-client

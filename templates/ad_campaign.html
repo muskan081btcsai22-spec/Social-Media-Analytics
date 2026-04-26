@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Ad Campaign Optimization</h2>
+
+    <form method="post" action="{{ url_for('ad.ads_page') }}" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-2">
+                <label for="impressions" class="form-label">Impressions</label>
+                <input type="number" step="0.01" class="form-control" id="impressions" name="impressions" required>
+            </div>
+            <div class="col-md-2">
+                <label for="clicks" class="form-label">Clicks</label>
+                <input type="number" step="0.01" class="form-control" id="clicks" name="clicks" required>
+            </div>
+            <div class="col-md-2">
+                <label for="conversions" class="form-label">Conversions</label>
+                <input type="number" step="0.01" class="form-control" id="conversions" name="conversions" required>
+            </div>
+            <div class="col-md-2">
+                <label for="ad_spend" class="form-label">Ad Spend (₹)</label>
+                <input type="number" step="0.01" class="form-control" id="ad_spend" name="ad_spend" required>
+            </div>
+            <div class="col-md-2">
+                <label for="revenue" class="form-label">Revenue (₹)</label>
+                <input type="number" step="0.01" class="form-control" id="revenue" name="revenue" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Calculate</button>
+            </div>
+        </div>
+    </form>
+
+    {% if metrics %}
+        <div class="row g-3 mb-4">
+            <div class="col-md-2">
+                <div class="card text-center {% if metrics.ROI > 0 %}border-success{% else %}border-danger{% endif %}">
+                    <div class="card-body">
+                        <i class="bi bi-mouse-pointer fs-1 text-primary"></i>
+                        <h5 class="card-title">CTR</h5>
+                        <p class="card-text fs-4">{{ metrics.CTR }}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center {% if metrics.ROI > 0 %}border-success{% else %}border-danger{% endif %}">
+                    <div class="card-body">
+                        <i class="bi bi-graph-up-arrow fs-1 text-success"></i>
+                        <h5 class="card-title">Conversion Rate</h5>
+                        <p class="card-text fs-4">{{ metrics.Conversion_Rate }}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center {% if metrics.ROI > 0 %}border-success{% else %}border-danger{% endif %}">
+                    <div class="card-body">
+                        <i class="bi bi-cash-stack fs-1 {% if metrics.ROI > 0 %}text-success{% else %}text-danger{% endif %}"></i>
+                        <h5 class="card-title">ROI</h5>
+                        <p class="card-text fs-4">{{ metrics.ROI }}%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center {% if metrics.ROI > 0 %}border-success{% else %}border-danger{% endif %}">
+                    <div class="card-body">
+                        <i class="bi bi-calculator fs-1 text-warning"></i>
+                        <h5 class="card-title">CPA</h5>
+                        <p class="card-text fs-4">₹{{ metrics.CPA }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card text-center {% if metrics.ROI > 0 %}border-success{% else %}border-danger{% endif %}">
+                    <div class="card-body">
+                        <i class="bi bi-megaphone fs-1 text-info"></i>
+                        <h5 class="card-title">CPM</h5>
+                        <p class="card-text fs-4">₹{{ metrics.CPM }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Metrics Visualization</h5>
+                <div id="metrics-chart"></div>
+                <script>
+                    var fig = JSON.parse('{{ chart_json|safe }}');
+                    Plotly.newPlot('metrics-chart', fig.data, fig.layout);
+                </script>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h5>Enter your campaign data above to see results</h5>
+            <p>Fill in the form with your ad campaign metrics and click Calculate to view the analysis.</p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
