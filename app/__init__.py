@@ -25,6 +25,9 @@ def create_app():
     from routes.ad_campaign import ad_bp
     from routes.realtime import realtime_bp
     from routes.competitor import competitor_bp
+    from routes.sentiment import sentiment_bp
+    from routes.network import network_bp
+    from routes.segmentation import segmentation_bp
     app.register_blueprint(auth_bp, url_prefix='')
     app.register_blueprint(cases_bp, url_prefix='')
     app.register_blueprint(trending_bp, url_prefix='')
@@ -32,6 +35,9 @@ def create_app():
     app.register_blueprint(ad_bp, url_prefix='')
     app.register_blueprint(realtime_bp, url_prefix='')
     app.register_blueprint(competitor_bp, url_prefix='')
+    app.register_blueprint(sentiment_bp, url_prefix='')
+    app.register_blueprint(network_bp, url_prefix='')
+    app.register_blueprint(segmentation_bp, url_prefix='')
 
     @login_manager.user_loader
     def load_user(user_id):

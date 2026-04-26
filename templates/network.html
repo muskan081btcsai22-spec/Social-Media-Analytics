@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Network Analysis</h3>
+<p class="text-muted">Mention graph — who mentions whom in posts</p>
+
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center mb-3">
+      <div class="card-body">
+        <h6 class="text-muted">Nodes</h6>
+        <h2>{{ results.num_nodes }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center mb-3">
+      <div class="card-body">
+        <h6 class="text-muted">Edges</h6>
+        <h2>{{ results.num_edges }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center mb-3">
+      <div class="card-body">
+        <h6 class="text-muted">Communities</h6>
+        <h2>{{ results.num_communities }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4>Interactive Graph</h4>
+<iframe src="{{ url_for('network.network_viz') }}" width="100%" height="520" style="border:1px solid #ddd; border-radius:8px;"></iframe>
+
+<h4 class="mt-4">Top Mentioned Users</h4>
+<table class="table table-striped">
+  <thead>
+    <tr><th>#</th><th>Username</th><th>Mentions Received</th></tr>
+  </thead>
+  <tbody>
+    {% for node in results.top_nodes %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ node.username }}</td>
+      <td><span class="badge bg-primary">{{ node.mentions }}</span></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

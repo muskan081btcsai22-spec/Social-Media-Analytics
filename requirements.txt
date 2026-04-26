@@ -8,3 +8,6 @@ pandas
 requests
 feedparser
 apify-client
+vaderSentiment
+networkx
+pyvis
