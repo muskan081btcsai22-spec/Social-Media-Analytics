@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Recommendation System</h2>
+
+<form method="POST" class="mb-3">
+    <input type="text" name="text" class="form-control" placeholder="Enter a post..." required>
+    <br>
+    <button type="submit" class="btn btn-primary">Get Recommendations</button>
+</form>
+
+<hr>
+
+{% for r in results %}
+<div class="card mb-2 p-2">
+    <b>{{ r.username }}</b><br>
+    {{ r.text }}<br>
+    ❤️ Likes: {{ r.likes }} | 🔥 Score: {{ r.score }}
+</div>
+{% endfor %}
+
+{% endblock %}

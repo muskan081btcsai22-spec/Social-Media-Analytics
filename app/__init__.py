@@ -28,6 +28,9 @@ def create_app():
     from routes.sentiment import sentiment_bp
     from routes.network import network_bp
     from routes.segmentation import segmentation_bp
+    from routes.recommendation import recommendation_bp
+    from routes.influencer import influencer_bp
+    from routes.visualization import visualization_bp
     app.register_blueprint(auth_bp, url_prefix='')
     app.register_blueprint(cases_bp, url_prefix='')
     app.register_blueprint(trending_bp, url_prefix='')
@@ -38,6 +41,10 @@ def create_app():
     app.register_blueprint(sentiment_bp, url_prefix='')
     app.register_blueprint(network_bp, url_prefix='')
     app.register_blueprint(segmentation_bp, url_prefix='')
+    app.register_blueprint(recommendation_bp, url_prefix='')
+    app.register_blueprint(influencer_bp, url_prefix='')
+    app.register_blueprint(visualization_bp, url_prefix='')
+
 
     @login_manager.user_loader
     def load_user(user_id):

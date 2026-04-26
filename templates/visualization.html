@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">📊 Analytics Dashboard</h2>
+
+<!-- Line Chart -->
+<div class="card mb-4 p-3">
+    <h5>Engagement Over Time</h5>
+    <div id="lineChart"></div>
+</div>
+
+<!-- Bar Chart -->
+<div class="card mb-4 p-3">
+    <h5>Likes vs Retweets</h5>
+    <div id="barChart"></div>
+</div>
+
+<!-- Pie Chart -->
+<div class="card mb-4 p-3">
+    <h5>Hashtag Distribution</h5>
+    <div id="pieChart"></div>
+</div>
+
+<!-- Top Posts -->
+<div class="card p-3">
+    <h5>Top Posts</h5>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Text</th>
+                <th>Likes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in top_posts %}
+            <tr>
+                <td>{{ p.username }}</td>
+                <td>{{ p.text }}</td>
+                <td>{{ p.likes }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Plotly Script -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>
+    var fig1 = JSON.parse('{{ engagement_chart | safe }}');
+    Plotly.newPlot('lineChart', fig1.data, fig1.layout);
+
+    var fig2 = JSON.parse('{{ bar_chart | safe }}');
+    Plotly.newPlot('barChart', fig2.data, fig2.layout);
+
+    var fig3 = JSON.parse('{{ pie_chart | safe }}');
+    Plotly.newPlot('pieChart', fig3.data, fig3.layout);
+</script>
+
+{% endblock %}
