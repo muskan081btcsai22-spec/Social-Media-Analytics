@@ -4,12 +4,20 @@ import pickle, os
 
 def extract_features(post):
     text = post.get('text', '')
+    
+    # Fix: safely extract hour from created_at
+    created_at = str(post.get('created_at', '12'))
+    try:
+        hour = int(created_at[:2])
+    except ValueError:
+        hour = 12  # default to 12 if parsing fails
+    
     return [
         len(text),
         text.count('#'),
         text.count('@'),
         1 if post.get('has_media') else 0,
-        int(str(post.get('created_at', '12'))[:2] or 12),
+        hour,
         post.get('follower_count', 0),
     ]
 

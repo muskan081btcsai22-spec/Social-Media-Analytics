@@ -26,11 +26,13 @@ def content_based(input_text, all_posts, top_n=5):
     # Prepare output
     recommendations = []
     for i in top_indices:
+        post = all_posts[i]
+        post_id = post.get('id') or str(post.get('_id', ''))  # handles both MongoDB _id and sample JSON id
         recommendations.append({
-            'id': all_posts[i]['id'],
-            'text': all_posts[i]['text'],
-            'username': all_posts[i]['username'],
-            'likes': all_posts[i]['likes'],
+            'id': post_id,
+            'text': post.get('text', ''),
+            'username': post.get('username', ''),
+            'likes': post.get('likes', 0),
             'score': round(float(similarity_scores[i]), 3)
         })
 
